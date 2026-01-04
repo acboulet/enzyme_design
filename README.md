@@ -4,5 +4,5 @@ Protein dashboard to visualize and demonstrate important metrics in enzymatic de
 
 ## Figure
 
-![Figure]("docs/1DKP.prox_residues.html")
+![Figure](docs/1DKP.prox_residues.html)
 
