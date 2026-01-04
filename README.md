@@ -1,2 +1,8 @@
 # QuartoProtein_Dashboard
-Quarto dashboard to review and visualize protein structural metrics.
+Protein dashboard to visualize and demonstrate important metrics in enzymatic design
+
+
+## Figure
+
+![Figure]("docs/1DKP.prox_residues.html")
+
