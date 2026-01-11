@@ -1,0 +1,68 @@
+---
+title: "Enzyme Structure Analysis Dashboard"
+format: 
+  dashboard:
+    orientation: columns
+    theme: cosmo
+---
+
+# Protein Structure Visualization
+
+## Column {width=70%}
+
+### 3D Structure - Residues Near IHP Ligand {.card}
+
+```{=html}
+<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
+```
+
+## Column {width=30%}
+
+### Analysis Overview {.card}
+
+This dashboard visualizes the 3D structure of protein **1DKP** with a focus on residues in proximity to the IHP ligand.
+
+**Visualization Features:**
+
+- **Gray markers**: All protein residues
+- **Green markers**: Residues within 7Å of the ligand
+- **Purple markers**: IHP ligand atoms
+
+The 3D plot is interactive - you can:
+
+- Rotate the view by clicking and dragging
+- Zoom using the scroll wheel
+- Hover over points for detailed information
+- Use the legend to toggle visibility of different groups
+
+### Key Statistics {.card}
+
+```{python}
+#| echo: false
+import plotly.graph_objects as go
+
+# Summary statistics
+stats = {
+    "Total Residues": 310,
+    "Proximal Residues (≤7Å)": 39,
+    "Ligand Atoms": 36,
+    "Proximity Threshold": "7.0 Å"
+}
+
+# Create a simple table
+fig = go.Figure(data=[go.Table(
+    header=dict(values=['<b>Property</b>', '<b>Value</b>'],
+                fill_color='paleturquoise',
+                align='left'),
+    cells=dict(values=[list(stats.keys()), list(stats.values())],
+               fill_color='lavender',
+               align='left'))
+])
+
+fig.update_layout(
+    margin=dict(l=0, r=0, t=0, b=0),
+    height=300
+)
+
+fig.show()
+```
