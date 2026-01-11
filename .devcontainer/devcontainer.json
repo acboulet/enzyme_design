@@ -35,7 +35,7 @@
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.11"
     },
-    "ghcr.io/devcontainers/features/git:1": {}
+    "ghcr.io/devcontainers/features/git-lfs:1": {}
   },
 
   "forwardPorts": [8050, 8888],
