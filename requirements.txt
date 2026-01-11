@@ -14,3 +14,7 @@ seaborn>=0.12.0
 
 # Molecular visualization
 py3Dmol>=2.0.0
+
+# Quarto visualziations
+jupyter>=1.1.1
+papermill>=2.6.0

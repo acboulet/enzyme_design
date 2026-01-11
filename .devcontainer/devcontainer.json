@@ -29,7 +29,7 @@
     }
   },
 
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postCreateCommand": "bash .devcontainer/init-env.sh",
     
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
