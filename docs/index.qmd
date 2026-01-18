@@ -1,17 +1,16 @@
 ---
 title: "Enzyme Structure Analysis Dashboard"
+author: "Aren Boulet"
 project:
-  type: website
   output-dir: docs
 format: 
   dashboard:
-    orientation: columns
     theme: cosmo
 ---
 
 # Protein Structure Visualization
 
-## Column {width=70%}
+## Row {height=70%}
 
 ### 3D Structure - Residues Near IHP Ligand
 
@@ -19,53 +18,43 @@ format:
 <iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
 ```
 
-## Column {width=30%}
+## Row {height=30%}
 
-### Analysis Overview
+### Column {width=60%}
 
-This dashboard visualizes the 3D structure of protein **1DKP** with a focus on residues in proximity to the IHP ligand.
 
-**Visualization Features:**
+::: {.card}
+**Visualization Features**
+
+This dashboard presents a visual representation of the Phytase (1DKP) crystal structure  bound to it's phytate ligand (IHP). The scatter plot represents the alpha-carbon and ligand atom locations in 3-dimensional space. 
 
 - **Gray markers**: All protein residues
 - **Green markers**: Residues within 7Å of the ligand
 - **Purple markers**: IHP ligand atoms
 
-The 3D plot is interactive - you can:
+::: 
 
-- Rotate the view by clicking and dragging
-- Zoom using the scroll wheel
-- Hover over points for detailed information
-- Use the legend to toggle visibility of different groups
+### Column {width=40%}
 
-### Key Statistics
+**Metrics table**
 
 ```{python}
 #| echo: false
-import plotly.graph_objects as go
+#| label: protein-stats
+#| tbl-cp: Summary Metrics
+from IPython.display import Markdown
+from tabulate import tabulate
 
 # Summary statistics
-stats = {
-    "Total Residues": 310,
-    "Proximal Residues (≤7Å)": 39,
-    "Ligand Atoms": 36,
-    "Proximity Threshold": "7.0 Å"
-}
+table = [
+    ["Total Residues", 310],
+    ["Proximal Residues (≤7Å)", 39],
+    ["Ligand Atoms", 36],
+    ["Proximity Threshold", "7.0 Å"]
+]
 
-# Create a simple table
-fig = go.Figure(data=[go.Table(
-    header=dict(values=['<b>Property</b>', '<b>Value</b>'],
-                fill_color='paleturquoise',
-                align='left'),
-    cells=dict(values=[list(stats.keys()), list(stats.values())],
-               fill_color='lavender',
-               align='left'))
-])
-
-fig.update_layout(
-    margin=dict(l=0, r=0, t=0, b=0),
-    height=300
-)
-
-fig.show()
+Markdown(tabulate(
+  table,
+  headers = ["Property", "Value"]
+))
 ```
