@@ -8,15 +8,7 @@ format:
     theme: cosmo
 ---
 
-# Protein Structure Visualization
-
-## Row {height=70%}
-
-### 3D Structure - Residues Near IHP Ligand
-
-```{=html}
-<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
-```
+# Initial Structure
 
 ## Row {height=30%}
 
@@ -58,3 +50,17 @@ Markdown(tabulate(
   headers = ["Property", "Value"]
 ))
 ```
+
+
+## Row {height=70%}
+
+### 3D Structure - Residues Near IHP Ligand
+
+```{=html}
+<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
+```
+
+
+# Predicted Enzyme Structure
+
+Placeholder for comparing the predicted protein to the original 1DKP structure.
