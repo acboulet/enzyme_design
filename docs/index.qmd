@@ -1,0 +1,66 @@
+---
+title: "Enzyme Structure Analysis Dashboard"
+author: "Aren Boulet"
+project:
+  output-dir: docs
+format: 
+  dashboard:
+    theme: cosmo
+---
+
+# Initial Structure
+
+## Row {height=30%}
+
+### Column {width=60%}
+
+
+::: {.card}
+**Visualization Features**
+
+This dashboard presents a visual representation of the Phytase (1DKP) crystal structure  bound to it's phytate ligand (IHP). The scatter plot represents the alpha-carbon and ligand atom locations in 3-dimensional space. 
+
+- **Gray markers**: All protein residues
+- **Green markers**: Residues within 7Å of the ligand
+- **Purple markers**: IHP ligand atoms
+
+::: 
+
+### Column {width=40%}
+
+**Metrics table**
+
+```{python}
+#| echo: false
+#| label: protein-stats
+#| tbl-cp: Summary Metrics
+from IPython.display import Markdown
+from tabulate import tabulate
+
+# Summary statistics
+table = [
+    ["Total Residues", 310],
+    ["Proximal Residues (≤7Å)", 39],
+    ["Ligand Atoms", 36],
+    ["Proximity Threshold", "7.0 Å"]
+]
+
+Markdown(tabulate(
+  table,
+  headers = ["Property", "Value"]
+))
+```
+
+
+## Row {height=70%}
+
+### 3D Structure - Residues Near IHP Ligand
+
+```{=html}
+<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
+```
+
+
+# Predicted Enzyme Structure
+
+Placeholder for comparing the predicted protein to the original 1DKP structure.
