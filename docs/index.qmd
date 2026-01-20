@@ -7,19 +7,184 @@ format:
   dashboard:
     theme: cosmo
 ---
+
+```{python}
+#| echo: false
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
+```
 # Introduction
 
-Description of project, goals, challenges, etc.
+:::{.card title="Introduction"}
+Placeholder.
 
-# Initial Structure {orientation="columns"}
+Navigate through the different steps using the tabs available at the top of the dashboard.
+:::
 
-## Column {width=70%}
+:::{.card title="Phytase Introduction"}
+Why phytase placeholder.
+:::
 
-```{=html}
-<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
+:::{.card title="The Process"}
+Placeholder describing theoretical design.
+1. Conserving residues involved in activity based on proximity to ligand and evolutionary conservation.
+2. Maintain these residues and generate remainder of protein sequence.
+3. Structural prediction and overlay with natural phytase.
+4. Comparison of key enzymatic characteristics; confidence predictions, pH activity, solubility. 
+:::
+
+
+# Initial Structure 
+
+## Row {height=10%}
+
+:::{.card title="Identify residues located near ligand, and conserved across evolutionary phytases." file="false"}
+The 3D visualization of *E. coli* phytase (PDB: 1DKP) is shown bound to its natural substrate, inositol hexakisphosphate (IHP), highlighting amino acid residues nearby the ligand.
+:::
+
+## Row {height=20%}
+
+```{python}
+#| echo: false
+#| label: line-ligand-distance
+#| title: Distance of Amino Acid Residue from Nearest Ligand Molecule
+
+# Read protein coordinates from CSV
+df = pd.read_csv("../output/1DKP.protein_coordinates.csv")
+
+# Sort by residue number for proper line plot
+df_sorted = df.sort_values('residue_number')
+ligand_name = "IHP"
+df_sorted_protein = df_sorted[df_sorted['chain'] != ligand_name]
+
+# Create line plot
+fig_line = go.Figure(
+    data=[
+        go.Scatter(
+            x=df_sorted_protein['residue_number'],
+            y=df_sorted_protein['min_distance'],
+            mode='lines+markers',
+            name='Distance to Ligand',
+            line=dict(color='steelblue', width=2),
+            marker=dict(size=4),
+            text=df_sorted_protein['residue_name'],
+            hovertemplate='<b>%{text}</b> (Residue %{x})<br>Distance: %{y:.2f} Å<extra></extra>'
+        ),
+        go.Scatter(
+            x=[df_sorted_protein['residue_number'].min(), df_sorted_protein['residue_number'].max()],
+            y=[7.0, 7.0],
+            mode='lines',
+            name='Threshold 7 Å',
+            line=dict(color='red', width=2, dash='dash'),
+            hovertemplate='Threshold: 7.0 Å<extra></extra>'
+        )
+    ]
+)
+
+fig_line.update_layout(
+    xaxis_title='Residue Number',
+    yaxis_title='Distance (Å)',
+    hovermode='x unified',
+    showlegend=False
+)
 ```
 
-## Column {width=30%}
+## Row {height=70%}
+
+### Column {width=70%}
+
+
+```{python}
+#| echo: false
+#| label: scatter-protein-coords
+#| title: 3D Protein Structure (1DKP)
+
+# Read protein coordinates from CSV
+df = pd.read_csv("../output/1DKP.protein_coordinates.csv")
+ligand_name = "IHP"
+
+# Split protein vs ligand rows
+protein_df = df[df['chain'] != ligand_name]
+ligand_df = df[df['chain'] == ligand_name]
+
+# Identify residues near ligand (those with min_distance <= 7)
+nearby_mask = protein_df['min_distance'] <= 7.0
+nearby_residues = protein_df[nearby_mask]
+far_residues = protein_df[~nearby_mask]
+
+# Create 3D scatter plot
+fig = go.Figure(
+    data=[
+        # Far protein residues (not near ligand)
+        go.Scatter3d(
+            x=far_residues['x'],
+            y=far_residues['y'],
+            z=far_residues['z'],
+            mode='markers',
+            name='Protein Residues',
+            marker=dict(
+                size=5,
+                opacity=0.4,
+                color='gray'
+            ),
+            text=far_residues['residue_label'],
+            hovertemplate='<b>%{text}</b><br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>'
+        ),
+        # Near protein residues (within 7 Å of ligand)
+        go.Scatter3d(
+            x=nearby_residues['x'],
+            y=nearby_residues['y'],
+            z=nearby_residues['z'],
+            mode='markers',
+            name='Residues Near Ligand (≤7 Å)',
+            marker=dict(
+                size=6,
+                opacity=0.7,
+                color='green'
+            ),
+            text=nearby_residues['residue_label'],
+            hovertemplate='<b>%{text}</b><br>Distance: %{customdata:.2f} Å<br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>',
+            customdata=nearby_residues['min_distance']
+        ),
+        # Ligand atoms
+        go.Scatter3d(
+            x=ligand_df['x'],
+            y=ligand_df['y'],
+            z=ligand_df['z'],
+            mode='markers',
+            name=f'Ligand ({ligand_name})',
+            marker=dict(
+                size=8,
+                opacity=0.9,
+                color='purple'
+            ),
+            text=ligand_df['residue_label'],
+            hovertemplate='<b>%{text}</b><br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>'
+        )
+    ]
+)
+
+
+fig.update_layout(
+    scene=dict(
+        xaxis_title='X (Å)',
+        yaxis_title='Y (Å)',
+        zaxis_title='Z (Å)',
+        aspectmode='data'
+    ),
+    # legend=dict(
+    #     yanchor='top',
+    #     y=1.02,
+    #     xanchor='center',
+    #     x=0.5
+    # )
+    # width=900,
+    # height=700
+)
+```
+
+### Column {width=30%}
 
 ::: {.card title="Visualization Features" fill="false"}
 This dashboard presents a visual representation of the Phytase (1DKP) crystal structure  bound to it's phytate ligand (IHP). 
