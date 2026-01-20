@@ -25,7 +25,8 @@ class PrepareProtein():
             self.import_cif(input_cif)
             self.extract_ca_coordinates()
             self.find_residues_near_ligand(ligand_name=ligand_name, distance_threshold=distance_threshold)
-            self.export_coordinates_csv()
+            self.add_ligand_coordinates(ligand_name=ligand_name)
+            self.export_coordinates_csv(output_path=output_path)
     
     def import_cif(self, cif_path):
         """
@@ -210,6 +211,62 @@ class PrepareProtein():
         print(f"✓ Added min_distance to {len(self.protein_coordinates)} residues for {ligand_name}")
         return self.protein_coordinates
     
+    def add_ligand_coordinates(self, ligand_name='IHP'):
+        """
+        Extract ligand atom coordinates and add them to protein_coordinates DataFrame.
+        
+        Parameters:
+        -----------
+        ligand_name : str
+            The name of the ligand to extract (default: 'IHP')
+        
+        Returns:
+        --------
+        pd.DataFrame : Updated protein_coordinates DataFrame with ligand atoms
+        """
+        if not self.model:
+            print("No structure loaded. Call import_cif() first.")
+            return pd.DataFrame()
+        
+        if self.protein_coordinates is None:
+            print("No protein coordinates found. Call extract_ca_coordinates() first.")
+            return pd.DataFrame()
+        
+        # Get all ligand atoms
+        ligand_coords = []
+        atom_index = 0
+        
+        for chain in self.model:
+            for residue in chain:
+                if residue.get_id()[0].startswith('H_') and residue.get_resname() == ligand_name:
+                    for atom in residue:
+                        coord = atom.get_coord()
+                        ligand_coords.append({
+                            'chain': ligand_name,
+                            'residue_name': ligand_name,
+                            'residue_number': atom_index,
+                            'residue_label': f"{ligand_name}_{atom.get_name()}",
+                            'x': round(coord[0], 3),
+                            'y': round(coord[1], 3),
+                            'z': round(coord[2], 3),
+                            'min_distance': 0.0
+                        })
+                        atom_index += 1
+        
+        if ligand_coords:
+            # Create DataFrame from ligand coordinates
+            ligand_df = pd.DataFrame(ligand_coords)
+            # Append to protein_coordinates
+            self.protein_coordinates = pd.concat(
+                [self.protein_coordinates, ligand_df],
+                ignore_index=True
+            )
+            print(f"✓ Added {len(ligand_coords)} ligand ({ligand_name}) atoms to coordinates")
+        else:
+            print(f"No ligand '{ligand_name}' found in structure")
+        
+        return self.protein_coordinates
+
     def export_coordinates_csv(self, output_path=None):
         """
         Export protein_coordinates DataFrame to a CSV file.

@@ -9,14 +9,145 @@ format:
 ---
 # Introduction
 
+```{python}
+#| echo: false
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
+```
+
 Description of project, goals, challenges, etc.
 
 # Initial Structure {orientation="columns"}
 
 ## Column {width=70%}
 
-```{=html}
-<iframe src="1DKP.prox_residues.html" width="100%" height="700px" frameborder="0"></iframe>
+### Row {height=20%}
+
+```{python}
+#| echo: false
+#| label: line-ligand-distance
+#| title: Distance of Amino Acid Residue from Nearest Ligand Molecule
+
+# Read protein coordinates from CSV
+df = pd.read_csv("../output/1DKP.protein_coordinates.csv")
+
+# Sort by residue number for proper line plot
+df_sorted = df.sort_values('residue_number')
+
+# Create line plot
+fig_line = go.Figure()
+
+fig_line.add_trace(go.Scatter(
+    x=df_sorted['residue_number'],
+    y=df_sorted['min_distance'],
+    mode='lines+markers',
+    name='Distance to Ligand',
+    line=dict(color='steelblue', width=2),
+    marker=dict(size=4),
+    text=df_sorted['residue_name'],
+    hovertemplate='<b>%{text}</b> (Residue %{x})<br>Distance: %{y:.2f} Å<extra></extra>'
+))
+
+# Add horizontal line at 7.0 Å threshold
+fig_line.add_hline(
+    y=7.0,
+    line_dash="dash",
+    line_color="red",
+    annotation_text="7.0 Å threshold",
+    annotation_position="right"
+)
+
+fig_line.update_layout(
+    xaxis_title='Residue Number',
+    yaxis_title='Distance to Ligand (Å)',
+    hovermode='x unified',
+    height=400
+)
+```
+
+### Row {height=80%}
+
+```{python}
+#| echo: false
+#| label: scatter-protein-coords
+#| title: 3D Protein Structure (1DKP)
+
+# Read protein coordinates from CSV
+df = pd.read_csv("../output/1DKP.protein_coordinates.csv")
+ligand_name = "IHP"
+
+# Split protein vs ligand rows
+protein_df = df[df['chain'] != ligand_name]
+ligand_df = df[df['chain'] == ligand_name]
+
+# Identify residues near ligand (those with min_distance <= 7)
+nearby_mask = protein_df['min_distance'] <= 7.0
+nearby_residues = protein_df[nearby_mask]
+far_residues = protein_df[~nearby_mask]
+
+# Create 3D scatter plot
+fig = go.Figure(
+    data=[
+        # Far protein residues (not near ligand)
+        go.Scatter3d(
+            x=far_residues['x'],
+            y=far_residues['y'],
+            z=far_residues['z'],
+            mode='markers',
+            name='Protein Residues',
+            marker=dict(
+                size=5,
+                opacity=0.4,
+                color='gray'
+            ),
+            text=far_residues['residue_label'],
+            hovertemplate='<b>%{text}</b><br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>'
+        ),
+        # Near protein residues (within 7 Å of ligand)
+        go.Scatter3d(
+            x=nearby_residues['x'],
+            y=nearby_residues['y'],
+            z=nearby_residues['z'],
+            mode='markers',
+            name='Residues Near Ligand (≤7 Å)',
+            marker=dict(
+                size=6,
+                opacity=0.7,
+                color='green'
+            ),
+            text=nearby_residues['residue_label'],
+            hovertemplate='<b>%{text}</b><br>Distance: %{customdata:.2f} Å<br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>',
+            customdata=nearby_residues['min_distance']
+        ),
+        # Ligand atoms
+        go.Scatter3d(
+            x=ligand_df['x'],
+            y=ligand_df['y'],
+            z=ligand_df['z'],
+            mode='markers',
+            name=f'Ligand ({ligand_name})',
+            marker=dict(
+                size=8,
+                opacity=0.9,
+                color='purple'
+            ),
+            text=ligand_df['residue_label'],
+            hovertemplate='<b>%{text}</b><br>X: %{x:.2f}<br>Y: %{y:.2f}<br>Z: %{z:.2f}<extra></extra>'
+        )
+    ]
+)
+
+fig.update_layout(
+    scene=dict(
+        xaxis_title='X (Å)',
+        yaxis_title='Y (Å)',
+        zaxis_title='Z (Å)',
+        aspectmode='data'
+    ),
+    width=900,
+    height=700
+)
 ```
 
 ## Column {width=30%}
