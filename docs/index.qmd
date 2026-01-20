@@ -7,7 +7,6 @@ format:
   dashboard:
     theme: cosmo
 ---
-# Introduction
 
 ```{python}
 #| echo: false
@@ -15,10 +14,34 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 ```
+# Introduction
 
-Description of project, goals, challenges, etc.
+:::{.card title="Introduction"}
+Placeholder.
+
+Navigate through the different steps using the tabs available at the top of the dashboard.
+:::
+
+:::{.card title="Phytase Introduction"}
+Why phytase placeholder.
+:::
+
+:::{.card title="The Process"}
+Placeholder describing theoretical design.
+1. Conserving residues involved in activity based on proximity to ligand and evolutionary conservation.
+2. Maintain these residues and generate remainder of protein sequence.
+3. Structural prediction and overlay with natural phytase.
+4. Comparison of key enzymatic characteristics; confidence predictions, pH activity, solubility. 
+:::
+
 
 # Initial Structure 
+
+## Row {height=10%}
+
+:::{.card title="Identify residues located near ligand, and conserved across evolutionary phytases." file="false"}
+The 3D visualization of *E. coli* phytase (PDB: 1DKP) is shown bound to its natural substrate, inositol hexakisphosphate (IHP), highlighting amino acid residues nearby the ligand.
+:::
 
 ## Row {height=20%}
 
@@ -67,7 +90,7 @@ fig_line.update_layout(
 )
 ```
 
-## Row {height=80%}
+## Row {height=70%}
 
 ### Column {width=70%}
 
