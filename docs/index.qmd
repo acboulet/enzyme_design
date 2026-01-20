@@ -18,11 +18,9 @@ import numpy as np
 
 Description of project, goals, challenges, etc.
 
-# Initial Structure {orientation="columns"}
+# Initial Structure 
 
-## Column {width=70%}
-
-### Row {height=20%}
+## Row {height=20%}
 
 ```{python}
 #| echo: false
@@ -34,39 +32,45 @@ df = pd.read_csv("../output/1DKP.protein_coordinates.csv")
 
 # Sort by residue number for proper line plot
 df_sorted = df.sort_values('residue_number')
+ligand_name = "IHP"
+df_sorted_protein = df_sorted[df_sorted['chain'] != ligand_name]
 
 # Create line plot
-fig_line = go.Figure()
-
-fig_line.add_trace(go.Scatter(
-    x=df_sorted['residue_number'],
-    y=df_sorted['min_distance'],
-    mode='lines+markers',
-    name='Distance to Ligand',
-    line=dict(color='steelblue', width=2),
-    marker=dict(size=4),
-    text=df_sorted['residue_name'],
-    hovertemplate='<b>%{text}</b> (Residue %{x})<br>Distance: %{y:.2f} Å<extra></extra>'
-))
-
-# Add horizontal line at 7.0 Å threshold
-fig_line.add_hline(
-    y=7.0,
-    line_dash="dash",
-    line_color="red",
-    annotation_text="7.0 Å threshold",
-    annotation_position="right"
+fig_line = go.Figure(
+    data=[
+        go.Scatter(
+            x=df_sorted_protein['residue_number'],
+            y=df_sorted_protein['min_distance'],
+            mode='lines+markers',
+            name='Distance to Ligand',
+            line=dict(color='steelblue', width=2),
+            marker=dict(size=4),
+            text=df_sorted_protein['residue_name'],
+            hovertemplate='<b>%{text}</b> (Residue %{x})<br>Distance: %{y:.2f} Å<extra></extra>'
+        ),
+        go.Scatter(
+            x=[df_sorted_protein['residue_number'].min(), df_sorted_protein['residue_number'].max()],
+            y=[7.0, 7.0],
+            mode='lines',
+            name='Threshold 7 Å',
+            line=dict(color='red', width=2, dash='dash'),
+            hovertemplate='Threshold: 7.0 Å<extra></extra>'
+        )
+    ]
 )
 
 fig_line.update_layout(
     xaxis_title='Residue Number',
-    yaxis_title='Distance to Ligand (Å)',
+    yaxis_title='Distance (Å)',
     hovermode='x unified',
-    height=400
+    showlegend=False
 )
 ```
 
-### Row {height=80%}
+## Row {height=80%}
+
+### Column {width=70%}
+
 
 ```{python}
 #| echo: false
@@ -138,6 +142,7 @@ fig = go.Figure(
     ]
 )
 
+
 fig.update_layout(
     scene=dict(
         xaxis_title='X (Å)',
@@ -145,12 +150,18 @@ fig.update_layout(
         zaxis_title='Z (Å)',
         aspectmode='data'
     ),
-    width=900,
-    height=700
+    # legend=dict(
+    #     yanchor='top',
+    #     y=1.02,
+    #     xanchor='center',
+    #     x=0.5
+    # )
+    # width=900,
+    # height=700
 )
 ```
 
-## Column {width=30%}
+### Column {width=30%}
 
 ::: {.card title="Visualization Features" fill="false"}
 This dashboard presents a visual representation of the Phytase (1DKP) crystal structure  bound to it's phytate ligand (IHP). 
